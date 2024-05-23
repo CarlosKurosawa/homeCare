@@ -82,7 +82,7 @@ const Chat = () => {
                         <div key={message.id}
                              className={message.userId === userId ? 'own-messageBox' : 'other-messageBox'}>
                             <div className={message.userId === userId ? 'own-message' : 'other-message'}>
-                                {message.userId === userId ? 'Paciente' : 'Farmaceutico'}
+                                {message.userId === userId ? 'Farmaceutico' : 'Paciente'}
                                 <div> {message.text}</div>
                             </div>
                         </div>
