@@ -1,9 +1,8 @@
-"use client";
-import React, { useState, useEffect, FormEvent } from 'react';
+"use client"
+import React, { useState, useEffect } from 'react';
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
-import Image from 'next/image';
 
 // Initialize Firebase
 const firebaseConfig = {
@@ -15,29 +14,19 @@ const firebaseConfig = {
     appId: "1:93583843710:web:e39c656a3108cde0a0132f"
 };
 
-if (typeof window !== 'undefined' && !firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+firebase.initializeApp(firebaseConfig);
 
 const db = firebase.firestore();
 
-interface Message {
-    id: string;
-    text: string;
-    userId: string;
-    chatId: string;
-    createdAt: firebase.firestore.Timestamp;
-}
-
-const Chat: React.FC = () => {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [text, setText] = useState<string>('');
-    const [selectedChat, setSelectedChat] = useState<string>('chat1');
+const Chat = () => {
+    const [messages, setMessages] = useState([]);
+    const [text, setText] = useState('');
+    const [selectedChat, setSelectedChat] = useState('chat1');
     const userId = 'Farmaceutico';
 
     const messagesRef = db.collection('messages');
     const query = messagesRef.where('chatId', '==', selectedChat).orderBy('createdAt').limit(25);
-    const [queriedMessages, loading, error] = useCollectionData<Message>(query, { idField: 'id' });
+    const [queriedMessages, loading, error] = useCollectionData(query, { idField: 'id' });
 
     useEffect(() => {
         console.log('Queried Messages:', queriedMessages);
@@ -46,7 +35,7 @@ const Chat: React.FC = () => {
         }
     }, [queriedMessages]);
 
-    const sendMessage = async (e: FormEvent) => {
+    const sendMessage = async (e) => {
         e.preventDefault();
 
         if (text.trim() === '') {
@@ -67,7 +56,7 @@ const Chat: React.FC = () => {
         }
     };
 
-    const handleChatChange = (chatId: string) => {
+    const handleChatChange = (chatId) => {
         setSelectedChat(chatId);
     };
 
@@ -86,12 +75,10 @@ const Chat: React.FC = () => {
                 <button className="paciente" onClick={() => handleChatChange('chat1')}>Paciente - José Bezerra</button>
                 <button className="paciente" onClick={() => handleChatChange('chat2')}>Paciente - Isabela Santos</button>
                 <button className="paciente" onClick={() => handleChatChange('chat3')}>Paciente - Pedro Pereira</button>
-
-
             </div>
             <div className="chatPart">
                 <div className="chat-messages">
-                {messages && messages.map((message) => (
+                    {messages && messages.map((message) => (
                         <div key={message.id}
                              className={message.userId === userId ? 'own-messageBox' : 'other-messageBox'}>
                             <div className={message.userId === userId ? 'own-message' : 'other-message'}>
@@ -112,7 +99,6 @@ const Chat: React.FC = () => {
                     </form>
                 </div>
             </div>
-
         </div>
     );
 }
