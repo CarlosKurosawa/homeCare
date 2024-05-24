@@ -52,10 +52,18 @@ const StockApp = () => {
             description: itemDescription
         });
         setIsModalOpen(false);
+        setItemName('');
+        setItemQuantity('');
+        setItemSupplier('');
+        setItemDescription('');
         fetchStockItems();
     };
 
     const handleCancel = () => {
+        setItemName('');
+        setItemQuantity('');
+        setItemSupplier('');
+        setItemDescription('');
         setIsModalOpen(false);
     };
 

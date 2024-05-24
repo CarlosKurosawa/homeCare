@@ -53,11 +53,21 @@ const AppointmentScheduler = () => {
     });
 
     setIsModalOpen(false);
+    setPatientName('');
+    setDoctorName('');
+    setDatetime(null);
+    setAppointmentType('');
+    setDescription('');
     fetchAppointments();
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
+    setPatientName('');
+    setDoctorName('');
+    setAppointmentType('');
+    setDatetime(null);
+    setDescription('');
   };
 
   const handleDelete = async id => {
