@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Input } from 'antd';
 import { initializeApp } from 'firebase/app';
@@ -37,15 +37,23 @@ const PatientApp = () => {
         setPatients(fetchedPatients);
     };
 
-    const generateRandomValue = () => {
-        const min = 60;
-        const max = 100;
+    const generateRandomValue = (min, max) => {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    const generateRandomTemperature = () => {
+        return generateRandomValue(360, 370) / 10; // Temperatura normal em Celsius
     };
 
     const generateRandomPressure = () => {
         const min = 80;
         const max = 120;
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    };
+
+    const generateRandomHeartRate = () => {
+        const min = 60;
+        const max = 100;
         return Math.floor(Math.random() * (max - min + 1)) + min;
     };
 
@@ -69,6 +77,16 @@ const PatientApp = () => {
         }
     };
 
+    const getColorForTemperature = (temperature) => {
+        if (temperature < 361) {
+            return 'blue'; // Hipotermia
+        } else if (temperature >= 361 && temperature <= 370) {
+            return 'green'; // Temperatura normal
+        } else {
+            return 'red'; // Febre
+        }
+    };
+
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -82,7 +100,8 @@ const PatientApp = () => {
             address,
             phone,
             description,
-            heartRate: generateRandomValue(),
+            temperature: generateRandomTemperature(),
+            heartRate: generateRandomHeartRate(),
             pressure: generateRandomPressure(),
         });
 
@@ -111,7 +130,6 @@ const PatientApp = () => {
     const handleDelete = async id => {
         await deleteDoc(doc(db, 'patients', id));
         fetchPatients();
-
     };
 
     const columns = [
@@ -123,11 +141,19 @@ const PatientApp = () => {
         { title: 'Número', dataIndex: 'phone', key: 'phone' },
         { title: 'Descrição', dataIndex: 'description', key: 'description' },
         {
-            title: 'Pressão',
+            title: 'Temperatura',
+            dataIndex: 'temperature',
+            key: 'temperature',
+            render: (text, record) => (
+                <span style={{ background: 'green', color: 'black', padding: 12, borderRadius: 12 }}>{record.temperature}</span>
+            ),
+        },
+        {
+            title: 'Pressão Arterial',
             dataIndex: 'pressure',
             key: 'pressure',
             render: (text, record) => (
-                <span style={{ background: getColorForPressure(record.pressure), color: 'black', padding: 12, borderRadius:12, }}>{record.pressure}</span>
+                <span style={{ background: getColorForPressure(record.pressure), color: 'black', padding: 12, borderRadius: 12 }}>{record.pressure}</span>
             ),
         },
         {
@@ -135,7 +161,7 @@ const PatientApp = () => {
             dataIndex: 'heartRate',
             key: 'heartRate',
             render: (text, record) => (
-                <span style={{ color: "black", background:getColorForHeartRate(record.heartRate), padding: 12, borderRadius:12, }}>{record.heartRate}</span>
+                <span style={{ color: "black", background: getColorForHeartRate(record.heartRate), padding: 12, borderRadius: 12 }}>{record.heartRate}</span>
             ),
         },
         {
@@ -162,7 +188,7 @@ const PatientApp = () => {
                    onCancel={handleCancel}>
                 <Input className="modalInput" placeholder="Nome" value={name} onChange={e => setName(e.target.value)}/>
                 <Input className="modalInput" placeholder="RG" value={rg} onChange={e => setRg(e.target.value)}/>
-                <Input className="modalInput" placeholder="CPF" value={cpf} onChange={e => setCpf(e.target.value)}/>
+                <Input className="modalInput" placeholder="CPF" value={cpf}  onChange={e => setCpf(e.target.value)}/>
                 <Input className="modalInput" placeholder="Idade" type="number" value={age}
                        onChange={e => setAge(e.target.value)}/>
                 <Input className="modalInput" placeholder="Endereço" value={address}
